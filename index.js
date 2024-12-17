@@ -6,15 +6,18 @@ import coursesRoutes from './routers/courses.js'
 const tasks = [
     {
         id: 1,
-        task: "Drink Water"
+        task: "Drink Water",
+        completed: true
     },
     {
         id: 2,
-        task: "Complete Work"
+        task: "Complete Work",
+        completed: false
     },
     {
         id: 3,
-        task: "Playing Games"
+        task: "Playing Games",
+        completed: true
     }
 ]
 
@@ -35,10 +38,10 @@ app.use(middleware)
 app.use('/user', userRoutes)
 app.use('/courses', coursesRoutes)
 
-app.get('/', (req, res) => {
-    console.log("req.requestBy", req.requestBy)
-    res.status(200).send(tasks);
-})
+// app.get('/', (req, res) => {
+//     console.log("req.requestBy", req.requestBy)
+//     res.status(200).send(tasks);
+// })
 
 app.post('/', (req, res) => {
     res.send('Post Request Called')
@@ -54,4 +57,21 @@ app.delete('/', (req, res) => {
 
 app.listen(PORT, () => {
     console.log("Server is running on port" + PORT)
+})
+
+//params
+app.get('/singleTask/:id', (req, res) => {
+    const task = tasks.find((data) => data.id == req.params.id)
+
+    if (!task) return res.status(404).send("Task Not Found")
+    res.status(200).send(task)
+})
+
+//queries
+app.get('/', (req, res) => {
+    const { completed } = req.query;
+    let filter = tasks;
+    if (completed)
+        filter = tasks.filter((data) => completed == "true" ? data.completed == true : data.completed == false)
+    res.status(200).send(filter);
 })
